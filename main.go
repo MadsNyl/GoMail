@@ -23,7 +23,13 @@ func main() {
 
 	logger.Info("Starting GoMail server...", nil)
 
-	client := asynq.NewClient(asynq.RedisClientOpt{Addr: os.Getenv("REDIS_ADDR")})
+	redisOpt, err := asynq.ParseRedisURI(os.Getenv("REDIS_ADDR"))
+	if err != nil {
+		logger.Error("Failed to parse Redis URI: " + err.Error(), nil)
+		return
+	}
+
+	client := asynq.NewClient(redisOpt)
 	defer client.Close()
 
 	http.Handle("/", APIKeyAuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

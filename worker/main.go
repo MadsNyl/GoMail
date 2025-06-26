@@ -22,13 +22,14 @@ func main() {
 
 	logger.Info("Starting GoMail worker...", nil)
 
-	redis_addr := os.Getenv("REDIS_ADDR")
-	if redis_addr == "" {
-		redis_addr = "localhost:6379"
+	redisOpt, err := asynq.ParseRedisURI(os.Getenv("REDIS_ADDR"))
+	if err != nil {
+		logger.Error("Failed to parse Redis URI: " + err.Error(), nil)
+		return
 	}
 
 	srv := asynq.NewServer(
-		asynq.RedisClientOpt{Addr: redis_addr},
+		redisOpt,
 		asynq.Config{Concurrency: 5},
 	)
 
