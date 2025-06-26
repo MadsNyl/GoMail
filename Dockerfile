@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 
 RUN go mod download
-RUN go build -o email-api main.go
+RUN go build -o email-api *.go
 
 # Final image
 FROM alpine:latest
